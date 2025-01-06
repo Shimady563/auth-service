@@ -1,3 +1,31 @@
 spring:
   application:
     name: auth-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db-changelog-master.xml
+logging:
+  level:
+    root: info
+jwt:
+  token:
+    access:
+      expiration: 86400000 # 24 hours
+      secret: e2572ccf3dad3fbae0d34ab2d395a3d8d538d9031b0c3037f302c077c344cd6c75e15ab7a5322fcf35e87d1ad3e813008f7bff153d4b912d358da6707ff10825
+    refresh:
+      expiration: 604800000 # 1 week
+      secret: 4e7dd4cfb4136b7aefd2560492b843a9c5cd006553dbb4c3f6e3ddbdac5fe1e67534ede1045df8ca0e88790e9df24a2e567bc0a3196663890825a012e3717adc
+auth:
+  whitelist: /signup, /login, /refresh, /swagger-ui.html, /v3/api-docs/**, /swagger-ui/**
+server:
+  servlet:
+    context-path: /api/v1/auth
+# TODO: add custom swagger docs path property
