@@ -19,5 +19,5 @@ public class AuthExceptionHandler {
         );
     }
 
-    // TODO: Add other handlers for auth exceptions
+    // TODO: Add other handlers for auth exceptions and remove jwt exception handler
 }

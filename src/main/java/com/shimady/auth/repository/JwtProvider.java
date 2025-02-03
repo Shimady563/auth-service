@@ -67,6 +67,8 @@ public class JwtProvider {
         return validateToken(token, refreshSecret);
     }
 
+    //TODO: i'm stupid, so i'm gonna add back the exception handling
+    // because handler doesn't work with exceptions thrown in the filter
     private boolean validateToken(String token, Key secret) {
         if (!StringUtils.hasText(token)) {
             return false;
