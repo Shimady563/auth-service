@@ -1,5 +1,6 @@
 package com.shimady.auth.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shimady.auth.model.JwtAuthentication;
 import com.shimady.auth.repository.JwtProvider;
 import com.shimady.auth.service.JwtUtils;
@@ -27,6 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private final JwtProvider provider;
+    private final ObjectMapper mapper;
 
     @Override
     protected void doFilterInternal(
@@ -37,16 +39,18 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("Filtering request: {}", request.getRequestURI());
         String token = JwtUtils.getTokenFromHeader(request.getHeader(AUTHORIZATION_HEADER));
 
-        if (provider.validateAccessToken(token)) {
-            log.info("Jwt token validated successfully");
-            Claims claims = provider.getClaimsFromToken(token);
-            JwtAuthentication authentication = JwtUtils.generateAuthentication(claims);
-            authentication.setAuthenticated(true);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!provider.validateAccessToken(token)) {
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(mapper.writerWithDefaultPrettyPrinter().writeValueAsString("Jwt token is invalid"));
+            return;
         }
 
-        //TODO: add error response as in my previous projects
-
+        log.info("Jwt token validated successfully");
+        Claims claims = provider.getClaimsFromToken(token);
+        JwtAuthentication authentication = JwtUtils.generateAuthentication(claims);
+        authentication.setAuthenticated(true);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 

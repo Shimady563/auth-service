@@ -1,12 +1,11 @@
 package com.shimady.auth.repository;
 
 import com.shimady.auth.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -15,6 +14,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 
+@Slf4j
 @Repository
 public class JwtProvider {
     @Value("${jwt.token.access.expiration}")
@@ -67,8 +67,6 @@ public class JwtProvider {
         return validateToken(token, refreshSecret);
     }
 
-    //TODO: i'm stupid, so i'm gonna add back the exception handling
-    // because handler doesn't work with exceptions thrown in the filter
     private boolean validateToken(String token, Key secret) {
         if (!StringUtils.hasText(token)) {
             return false;
@@ -79,9 +77,18 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.error("Jwt token expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("Jwt token unsupported: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.error("Jwt token malformed: {}", e.getMessage());
+        } catch (SignatureException e) {
+            log.error("Jwt token has wrong signature: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new JwtException(e.getMessage());
+            log.error("Invalid jwt token: {}", e.getMessage());
         }
+        return false;
     }
 
     public String getEmailFromAccessToken(String token) {
