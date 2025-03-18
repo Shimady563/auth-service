@@ -5,6 +5,7 @@ import com.shimady.auth.model.dto.JwtResponse;
 import com.shimady.auth.model.dto.RefreshJwtRequest;
 import com.shimady.auth.model.dto.UserResponse;
 import com.shimady.auth.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,17 +25,17 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public JwtResponse signUp(@RequestBody JwtRequest request) {
+    public JwtResponse signUp(@Valid @RequestBody JwtRequest request) {
         return authService.signUp(request);
     }
 
     @PostMapping("/login")
-    public JwtResponse signIn(@RequestBody JwtRequest request) {
+    public JwtResponse signIn(@Valid @RequestBody JwtRequest request) {
         return authService.authenticate(request);
     }
 
     @PostMapping("/refresh")
-    public JwtResponse refreshToken(@RequestBody RefreshJwtRequest request) {
+    public JwtResponse refreshToken(@Valid @RequestBody RefreshJwtRequest request) {
         return authService.refreshToken(request);
     }
 }

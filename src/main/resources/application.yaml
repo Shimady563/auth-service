@@ -28,4 +28,3 @@ auth:
 server:
   servlet:
     context-path: /api/v1/auth
-# TODO: add custom swagger docs path property
