@@ -3,9 +3,7 @@ package com.shimady.auth.service;
 import com.shimady.auth.model.JwtAuthentication;
 import com.shimady.auth.model.Role;
 import io.jsonwebtoken.Claims;
-import org.springframework.stereotype.Service;
 
-@Service
 public class JwtUtils {
     public static JwtAuthentication generateAuthentication(Claims claims) {
         JwtAuthentication auth = new JwtAuthentication();

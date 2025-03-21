@@ -42,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!provider.validateAccessToken(token)) {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(mapper.writerWithDefaultPrettyPrinter().writeValueAsString("Jwt token is invalid"));
+            response.getWriter().write(mapper.writerWithDefaultPrettyPrinter().writeValueAsString("Jwt token is invalid or expired"));
             return;
         }
 
